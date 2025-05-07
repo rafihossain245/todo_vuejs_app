@@ -25,7 +25,6 @@
         <div class="bg-white shadow rounded-lg p-6">
           <h2 class="text-lg font-medium text-gray-900 mb-4">Welcome, {{ user?.name }}</h2>
           
-          <!-- Add Task Form -->
           <div class="mb-6">
             <form @submit.prevent="addTask" class="flex gap-4">
               <input
@@ -51,7 +50,6 @@
             </form>
           </div>
 
-          <!-- Task List -->
           <div class="space-y-4">
             <div
               v-for="task in tasks"
@@ -105,7 +103,6 @@ const newTask = ref({
   body: '',
 });
 
-// Fetch user data
 onMounted(async () => {
   try {
     const response = await axios.get('/api/user');
@@ -117,7 +114,6 @@ onMounted(async () => {
   }
 });
 
-// Fetch tasks
 const fetchTasks = async () => {
   try {
     const response = await axios.get('/api/tasks');
@@ -127,7 +123,6 @@ const fetchTasks = async () => {
   }
 };
 
-// Add new task
 const addTask = async () => {
   try {
     const response = await axios.post('/api/tasks', newTask.value);
@@ -138,7 +133,6 @@ const addTask = async () => {
   }
 };
 
-// Toggle task completion
 const toggleTask = async (task) => {
   try {
     const response = await axios.put(`/api/tasks/${task.id}`, {
@@ -152,7 +146,6 @@ const toggleTask = async (task) => {
   }
 };
 
-// Delete task
 const deleteTask = async (task) => {
   try {
     await axios.delete(`/api/tasks/${task.id}`);
@@ -162,31 +155,22 @@ const deleteTask = async (task) => {
   }
 };
 
-// Handle logout
 const handleLogout = async () => {
   try {
-    // First, get the CSRF cookie
     await axios.get('/sanctum/csrf-cookie');
-    
-    // Then perform logout
     await axios.post('/api/logout');
     
-    // Clear any local state
     user.value = null;
     tasks.value = [];
     
-    // Clear any stored data
     localStorage.clear();
     sessionStorage.clear();
     
-    // Wait a moment to ensure the session is cleared
     await new Promise(resolve => setTimeout(resolve, 100));
     
-    // Force a hard redirect to login page
     window.location.replace('/login');
   } catch (error) {
     console.error('Logout error:', error);
-    // Force redirect even on error
     window.location.replace('/login');
   }
 };

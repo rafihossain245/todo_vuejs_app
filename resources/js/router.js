@@ -20,7 +20,6 @@ const routes = [
         meta: { requiresAuth: true }
     },
     {
-        // Catch all route - must be last
         path: '/:pathMatch(.*)*',
         redirect: '/dashboard'
     }
@@ -31,7 +30,6 @@ const router = createRouter({
     routes
 });
 
-// Check if user is authenticated
 const checkAuth = async () => {
     try {
         const response = await fetch('/api/user', {
@@ -46,24 +44,21 @@ const checkAuth = async () => {
     }
 };
 
-// 👇 Setup global navigation guard
 router.beforeEach(async (to, from, next) => {
-    // Get current auth state from backend
     try {
-      const res = await axios.get('/api/user') // Sanctum will return user if authenticated
+      const res = await axios.get('/api/user')
       const isAuthenticated = !!res.data
   
       if (to.meta.requiresAuth && !isAuthenticated) {
-        return next('/login') // Not logged in → redirect to login
+        return next('/login')
       }
   
       if (to.meta.requiresGuest && isAuthenticated) {
-        return next('/dashboard') // Already logged in → redirect from login
+        return next('/dashboard')
       }
   
       return next()
     } catch (error) {
-      // Not authenticated or /api/user failed
       if (to.meta.requiresAuth) {
         return next('/login')
       }
